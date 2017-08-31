@@ -6,44 +6,28 @@ const bodyParser = require('body-parser');
 
 let dataMap = [];
 let dataReduce;
-let counter = 0;
+let displayStr = "";
 
 const proc1 = (req, res, next) => {
-	dataMap.push(++counter);
+	console.log('proc1 - req ', req.body);
+	dataMap.push(req.body.model.value1);
 	dataReduce = dataMap.reduce((sum, value) => {
 		return sum + value;
 	}); 
-	console.log(dataReduce);
+	displayStr += ':' + req.body.model.value2;
+	console.log('proc 1 - dataReduce ' + dataReduce);
+	console.log('displayStr ', displayStr );
 	next();
-/*
-	Object.getOwnPropertyNames(set)
-	.forEach((key, element) => {
-		console.log(key + ' ' + set[key]);
-	});
-
-	let keys = Object.keys(set);
-	keys.forEach((key,val) => {
-		console.log(key + ' => ' + set[key]);
-	});
-
-	console.log('proc1');
-*/
 };
 
 const proc2 = (req, res, next) => {
-	console.log('proc2');
-	res.json({ message: dataReduce });
+	res.json({ sum: dataReduce, set: dataMap, display: displayStr });
 };
 	
 router
 .route('/')
-.get([ proc1, proc2], (req, res, next) => {
- 	console.log('Start');
-})
-.post((req, res, next) => {
-	console.log('post ', req.body);
-	res.json({ message: 'received' });
-});
+.get([ proc1, proc2], (req, res, next) => {})
+.post([ proc1, proc2],(req, res, next) => {});
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
